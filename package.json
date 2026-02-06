@@ -1,0 +1,23 @@
+{
+  "name": "bevy-records-automation-app",
+  "version": "0.0.1",
+  "description": "a simple node app that downloads records from bevy and upload them somewhere else. ",
+  "homepage": "https://github.com/ToYoNiX/bevy-records-automation-app#readme",
+  "bugs": {
+    "url": "https://github.com/ToYoNiX/bevy-records-automation-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ToYoNiX/bevy-records-automation-app.git"
+  },
+  "license": "MIT",
+  "author": "ToYoNiX",
+  "main": "app.js",
+  "scripts": {
+    "test": "nodemon"
+  },
+  "dependencies": {
+    "axios": "^1.13.4",
+    "express": "^5.2.1"
+  }
+}

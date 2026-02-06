@@ -1,0 +1,18 @@
+<DOCTYPE html> 
+<html lang="en">
+	<head>
+		<title>
+			Simple Video Automation Tool
+		</title>
+		<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+	</head>
+	<body>
+		<div id="focus">
+			<form hx-post="/download" hx-target="#focus" hx-swap="innerHTML">
+				<input type="text" name="url" placeholder="url" id="url">
+				<button type="submit">Start Download</button>
+			</form>
+		</div>
+	</body>
+</html>
+

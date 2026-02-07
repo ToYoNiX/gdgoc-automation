@@ -1,6 +1,12 @@
 import progress from "./progress";
 
-export default function index(processes: string[]) {
+interface process_parameters {
+	"name": string,
+	"length": number,
+	"downloaded": number,
+}
+
+export default function index(processes: Map<string, process_parameters>) {
   return (
     <html lang="en">
       <head>
@@ -15,8 +21,9 @@ export default function index(processes: string[]) {
             <button type="submit">Start Download</button>
           </form>
         </div>
-        {processes.map((process) => progress(process))}
-        <div></div>
+        <div>
+          {Array.from(processes.entries()).map(([key, values]) => progress(values))}
+        </div>
       </body>
     </html>
   );

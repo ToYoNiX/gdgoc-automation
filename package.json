@@ -35,7 +35,8 @@
     "axios": "^1.13.4",
     "express": "^5.2.1",
     "htmx.org": "^2.0.8",
-    "pino": "^10.3.0"
+    "pino": "^10.3.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

@@ -1,23 +1,46 @@
 {
-  "name": "bevy-records-automation-app",
+  "name": "",
   "version": "0.0.1",
-  "description": "a simple node app that downloads records from bevy and upload them somewhere else. ",
+  "description": "a simple node app that downloads records from bevy and upload them somewhere else.",
+  "main": "app.ts",
+  "type": "module",
+  "license": "MIT",
+  "private": false,
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 6.0.0"
+  },
   "homepage": "https://github.com/ToYoNiX/bevy-records-automation-app#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ToYoNiX/bevy-records-automation-app"
+  },
   "bugs": {
     "url": "https://github.com/ToYoNiX/bevy-records-automation-app/issues"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ToYoNiX/bevy-records-automation-app.git"
+  "keywords": [],
+  "author": {
+    "name": "ToYoNiX",
+    "email": "assem.mohamed.toyonix@gmail.com",
+    "url": "toyonix.github.io"
   },
-  "license": "MIT",
-  "author": "ToYoNiX",
-  "main": "app.js",
   "scripts": {
-    "test": "nodemon"
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.ts",
+    "test": "echo \"No tests yet\""
   },
   "dependencies": {
+    "@kitajs/html": "^4.2.11",
     "axios": "^1.13.4",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "htmx.org": "^2.0.8"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.1",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

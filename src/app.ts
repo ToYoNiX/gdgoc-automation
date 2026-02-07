@@ -1,11 +1,14 @@
 import express from "express"
 import axios from "axios";
+import pino  from "pino";
 import { join } from "path";
 import { createWriteStream, mkdirSync } from "fs";
+
 import index from "./views/index"
 import progress from "./views/progress"
 
 const app = express();
+const logger = pino();
 
 app.use(express.json())
 app.use(express.urlencoded())
@@ -40,19 +43,19 @@ app.post("/download", async (req, res) => {
 		const filePath = join("downloads", `${name}.mp4`);
 		const writer = createWriteStream(filePath);
 
-		console.log(filePath);
+		logger.info(`${filePath} downloading started`);
 
 		writer.on("finish", () => {
-			console.log(`${filePath} Downloaded!`);
+			logger.info(`${filePath} downloaded`);
 		});
 
 		writer.on("error", (err) => {
-			console.log(`${filePath} -> ${err}`);
+			logger.error(`${filePath} couldn't download | ${err}`);
 		});
 
 		response.data.pipe(writer);
 	} catch (err) {
-		console.log(err);
+		logger.error(`axois failed | ${err}`);
 	}
 })
 
@@ -61,6 +64,6 @@ app.get("/progress", (req, res) => {
 })
 
 app.listen(3000, () => {
-	console.log("App is running on port 3000");
+	logger.info("listenning at port 3000");
 })
 

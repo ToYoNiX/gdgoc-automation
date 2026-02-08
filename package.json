@@ -22,7 +22,7 @@
   "author": {
     "name": "ToYoNiX",
     "email": "assem.mohamed.toyonix@gmail.com",
-    "url": "toyonix.github.io"
+    "url": "https://toyonix.github.io"
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",

@@ -2,7 +2,7 @@
   "name": "",
   "version": "0.0.1",
   "description": "a simple node app that downloads records from bevy and upload them somewhere else.",
-  "main": "app.ts",
+  "main": "server.ts",
   "type": "module",
   "license": "MIT",
   "private": false,
@@ -25,9 +25,9 @@
     "url": "toyonix.github.io"
   },
   "scripts": {
-    "dev": "tsx watch src/app.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/app.ts",
+    "start": "node dist/server.js",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {

@@ -34,6 +34,8 @@
     "@kitajs/html": "^4.2.11",
     "axios": "^1.13.4",
     "express": "^5.2.1",
+    "google-auth-library": "^10.5.0",
+    "googleapis": "^171.4.0",
     "htmx.org": "^2.0.8",
     "pino": "^10.3.0",
     "uuid": "^13.0.0"

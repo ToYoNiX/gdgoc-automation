@@ -1,6 +1,9 @@
 # Download folder
 downloads
 
+# OAuth Secrets
+secrets.json
+
 # Logs
 logs
 *.log

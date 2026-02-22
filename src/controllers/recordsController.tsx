@@ -1,79 +1,53 @@
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
-import { join } from "path";
-import { createWriteStream, mkdirSync } from "fs";
-import { processes } from "../app.js";
+import type { Request, Response } from 'express';
 import layout from "../views/layout.js";
 import progress from "../views/progress.js";
 import index from "../views/index.js";
-import type { process_parameters } from "../common/types.js";
 import { logger } from "../app.js";
+import { download, downloadProgress } from "../services/recordsService.js";
 
-export function getProgress(req: any, res: any) {
-  const key = req.params.id;
+export function getProgress(req: Request, res: Response) {
+  const key = req.params.id as string;
 
-  const parameters = processes.get(key);
-  if (!parameters) {
-    return res.send("");
+  if (!key) {
+    return res.status(400).send("Missing progress ID");
   }
 
-  return res.send(progress(key, parameters));
+  const result = downloadProgress(key);
+
+  if (result === "Not found") {
+    return res.status(404).send("No download found for that ID");
+  }
+
+  return res.send(progress(key, result));
 }
 
-export function getIndex(req: any, res: any) {
+export function getIndex(req: Request, res: Response) {
   return res.send(layout("Records Dashboard", index()));
 }
 
-export async function downloadVideo(req: any, res: any) {
-  const name: string = req.body.name;
-  const url: string = req.body.url;
+export async function downloadVideo(req: Request, res: Response) {
+  const name: string = req.body.name?.trim();
+  const url: string = req.body.url?.trim();
 
-  if (!url) {
-    res.redirect("/records");
+  if (!url || !name) {
+    return res.status(400).send("Both name and url are required");
   }
 
-  // Create the download folder
-  mkdirSync("downloads", { recursive: true });
+  // basic url validation
+  try {
+    new URL(url);
+  } catch {
+    return res.status(400).send("Invalid URL provided");
+  }
+
+  // sanitize name to prevent path traversal
+  const safeName = name.replace(/[^a-zA-Z0-9_\-]/g, "_");
 
   try {
-    const response = await axios({
-      method: "GET",
-      url,
-      responseType: "stream",
-      timeout: 30_000,
-    });
-
-    const id: string = uuidv4();
-
-    const filePath = join("downloads", `${name}.mp4`);
-    const writer = createWriteStream(filePath);
-
-    let parameters: process_parameters = {
-      name: name,
-      length: parseInt(response.headers["content-length"], 10),
-      downloaded: 0,
-    };
-
-    processes.set(id, parameters);
-
-    response.data.on("data", (chunk: Buffer) => {
-      parameters["downloaded"] += chunk.length;
-      processes.set(id, parameters);
-    });
-
-    logger.info(`${filePath} downloading started`);
-
-    writer.on("finish", () => {
-      logger.info(`${filePath} downloaded`);
-    });
-
-    writer.on("error", (err) => {
-      logger.error(`${filePath} couldn't download | ${err}`);
-    });
-
-    response.data.pipe(writer);
-    res.redirect("/records");
+    await download(safeName, url);
+    return res.redirect("/records");
   } catch (err) {
-    logger.error(`axois failed to download ${name} | ${err}`);
+    logger.error(`Failed to download ${safeName} from ${url} | ${err}`);
+    return res.status(500).send("Download failed");
   }
 }

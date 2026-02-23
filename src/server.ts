@@ -4,5 +4,5 @@ const PORT = process.env.PORT ?? 3000;
 
 // Starting our main application
 app.listen(PORT, () => {
-	console.log("Application is starting up. would be available at port 3000");
+	console.log(`Application is starting up. would be available at port ${PORT}`);
 })

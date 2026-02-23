@@ -1,5 +1,6 @@
 import express from "express";
 import pino from "pino";
+import "dotenv/config";
 import recordsRouter from "./routes/recordsRouter.js";
 
 const app = express();

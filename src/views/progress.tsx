@@ -2,14 +2,21 @@ import { processes } from "../store/processes.js";
 import type { process_parameters } from "../common/types.js";
 
 function progressItem(id: string, parameters: process_parameters): JSX.Element {
-  const percent =
+  const downloadPercent =
     parameters.length > 0
       ? Math.floor((parameters.downloaded / parameters.length) * 100)
       : 0;
 
+  const uploadPercent =
+    parameters.length > 0
+      ? Math.floor((parameters.uploaded / parameters.length) * 100)
+      : 0;
+
   return (
     <div id={`process-${id}`}>
-      {parameters.name} - {percent >= 100 ? "Complete" : `Progress: ${percent}%`}
+      <strong>{parameters.name}</strong>
+      <div>Downloaded: {downloadPercent}%</div>
+      <div>Uploaded: {uploadPercent}%</div>
     </div>
   );
 }
@@ -24,7 +31,7 @@ export default function progress(): JSX.Element {
       hx-swap="outerHTML"
     >
       {Array.from(processes.entries()).map(([id, values]) =>
-        progressItem(id, values)
+        progressItem(id, values),
       )}
     </div>
   );

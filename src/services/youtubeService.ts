@@ -1,7 +1,9 @@
 import { google } from "googleapis";
-import { writeFileSync, readFileSync, mkdirSync } from "fs";
+import { writeFileSync, readFileSync, mkdirSync, statSync, createReadStream, unlinkSync } from "fs";
 import { join } from "path";
 import { logger } from "../app.js";
+import { processes } from "../store/processes.js";
+import type { process_parameters } from "../common/types.js";
 
 const TOKEN_PATH = join("credentials", "youtube_token.json");
 const SCOPES = ["https://www.googleapis.com/auth/youtube.upload"];
@@ -57,4 +59,39 @@ export async function getAuthenticatedClient() {
   } catch {
     throw new Error("No YouTube token found, OAuth flow required");
   }
+}
+
+export async function uploadVideo(id: string, parameters: process_parameters): Promise<void> {
+  const client = await getAuthenticatedClient();
+  const youtube = google.youtube({ version: "v3", auth: client });
+
+  const res = await youtube.videos.insert(
+    {
+      part: ["snippet", "status"],
+      requestBody: {
+        snippet: {
+          title: parameters.name,
+        },
+        status: {
+          privacyStatus: "unlisted",
+        },
+      },
+      media: {
+        body: createReadStream(parameters.filePath),
+      },
+    },
+    {
+      onUploadProgress: (event) => {
+        parameters.uploaded = event.bytesRead;
+        processes.set(id, parameters);
+      },
+    }
+  );
+
+  logger.info(`${parameters.name} uploaded to YouTube | video id: ${res.data.id}`);
+  parameters.uploaded = parameters.length;
+  processes.set(id, parameters);
+
+  unlinkSync(parameters.filePath);
+  logger.info(`${parameters.filePath} deleted after upload`);
 }

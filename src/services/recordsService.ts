@@ -5,6 +5,7 @@ import { createWriteStream, mkdirSync } from "fs";
 import { logger } from "../app.js";
 import type { process_parameters } from "../common/types.js";
 import { processes } from "../store/processes.js";
+import { uploadVideo } from "./youtubeService.js";
 
 export async function download(name: string, url: string): Promise<void> {
   mkdirSync("downloads", { recursive: true });
@@ -19,13 +20,14 @@ export async function download(name: string, url: string): Promise<void> {
   const id: string = uuidv4();
   const filePath = join("downloads", `${id}_${name}.mp4`);
   const writer = createWriteStream(filePath);
-
   const contentLength = response.headers["content-length"];
 
   let parameters: process_parameters = {
     name,
+    filePath,
     length: contentLength ? parseInt(contentLength, 10) : 0,
     downloaded: 0,
+    uploaded: 0,
   };
 
   processes.set(id, parameters);
@@ -37,19 +39,14 @@ export async function download(name: string, url: string): Promise<void> {
 
   logger.info(`${filePath} download started`);
 
-  return new Promise((resolve, reject) => {
-    writer.on("finish", () => {
-      logger.info(`${filePath} downloaded successfully`);
-      processes.delete(id);
-      resolve();
-    });
-
-    writer.on("error", (err) => {
-      logger.error(`${filePath} failed to download | ${err}`);
-      processes.delete(id);
-      reject(err);
-    });
-
+  await new Promise<void>((resolve, reject) => {
+    writer.on("finish", resolve);
+    writer.on("error", reject);
     response.data.pipe(writer);
   });
+
+  logger.info(`${filePath} download complete, starting upload`);
+  processes.set(id, parameters);
+
+  await uploadVideo(id, parameters);
 }

@@ -20,7 +20,7 @@ export default function progress(): JSX.Element {
       id="progress"
       hx-get="/records/progress"
       hx-target="#progress"
-      hx-trigger="every 2s"
+      hx-trigger="every 5s"
       hx-swap="outerHTML"
     >
       {Array.from(processes.entries()).map(([id, values]) =>

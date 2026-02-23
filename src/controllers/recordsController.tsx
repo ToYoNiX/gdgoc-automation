@@ -10,7 +10,7 @@ export function getProgress(req: Request, res: Response) {
 }
 
 export function getIndex(req: Request, res: Response) {
-  return res.send(layout("Records Dashboard", index()));
+  return res.send(layout("Records Dashboard", index(), true));
 }
 
 export async function downloadVideo(req: Request, res: Response) {

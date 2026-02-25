@@ -20,12 +20,37 @@ function createOAuthClient() {
   return new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 }
 
-export function isAuthenticated(): boolean {
+export function getTokenStatus(): { connected: boolean; expiresIn?: string } {
   try {
-    readFileSync(TOKEN_PATH, "utf-8");
-    return true;
+    const raw = readFileSync(TOKEN_PATH, "utf-8");
+    const token = JSON.parse(raw);
+
+    if (!token.expiry_date) return { connected: true };
+
+    const now = Date.now();
+    const diff = token.expiry_date - now;
+
+    if (diff <= 0) return { connected: false };
+
+    // calculate human readable time left
+    const hours = Math.floor(diff / 1000 / 60 / 60);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+
+    return {
+      connected: true,
+      expiresIn: hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`,
+    };
   } catch {
-    return false;
+    return { connected: false };
+  }
+}
+
+export function revokeToken(): void {
+  try {
+    unlinkSync(TOKEN_PATH);
+    logger.info("YouTube token revoked");
+  } catch {
+    throw new Error("No token to revoke");
   }
 }
 

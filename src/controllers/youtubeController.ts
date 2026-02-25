@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { logger } from "../app.js";
-import { getAuthUrl, handleCallback } from "../services/youtubeService.js";
+import { getAuthUrl, handleCallback, revokeToken } from "../services/youtubeService.js";
+import youtubeStatus from "../views/youtubeStatus.js";
 
 export function redirectToGoogle(req: Request, res: Response) {
   try {
@@ -27,4 +28,18 @@ export async function handleGoogleCallback(req: Request, res: Response) {
     logger.error(`Failed to handle Google callback | ${err}`);
     return res.status(500).send("Failed to complete YouTube authorization");
   }
+}
+
+export function handleRevoke(req: Request, res: Response) {
+  try {
+    revokeToken();
+    return res.redirect("/records/youtube/auth");
+  } catch (err) {
+    logger.error(`Failed to revoke token | ${err}`);
+    return res.status(500).send("Failed to revoke token");
+  }
+}
+
+export function getStatus(req: Request, res: Response) {
+  return res.send(youtubeStatus());
 }

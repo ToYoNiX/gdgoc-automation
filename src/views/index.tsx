@@ -1,8 +1,7 @@
-import { isAuthenticated } from "../services/youtubeService.js";
 import progress from "./progress.js";
+import youtubeStatus from "./youtubeStatus.js";
 
 export default function index(): JSX.Element {
-  const authenticated = isAuthenticated();
   return (
     <div id="index">
       <form hx-post="/records/download" hx-target="#index" hx-swap="outerHTML">
@@ -10,13 +9,7 @@ export default function index(): JSX.Element {
         <input type="text" name="url" placeholder="URL" id="url" required />
         <button type="submit">Start Download</button>
       </form>
-      <div>
-        {authenticated ? (
-          <span>✓ YouTube connected</span>
-        ) : (
-          <a href="/records/youtube/auth">Connect YouTube</a>
-        )}
-      </div>
+      {youtubeStatus()}
       {progress()}
     </div>
   );

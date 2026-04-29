@@ -54,7 +54,7 @@ export async function download(
   });
 
   const contentLength = response.headers["content-length"];
-  parameters.length = contentLength ? parseInt(contentLength, 10) : 0;
+  parameters.length = contentLength ? parseInt(String(contentLength), 10) : 0;
   processes.set(id, parameters);
 
   const writer = createWriteStream(filePath);

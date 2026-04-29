@@ -96,9 +96,12 @@ export async function uploadVideo(id: string, parameters: process_parameters): P
       requestBody: {
         snippet: {
           title: parameters.name,
+          description: parameters.description,
+          categoryId: parameters.categoryId,
+          tags: parameters.tags.length > 0 ? parameters.tags : null,
         },
         status: {
-          privacyStatus: "unlisted",
+          privacyStatus: parameters.visibility,
         },
       },
       media: {
@@ -113,10 +116,8 @@ export async function uploadVideo(id: string, parameters: process_parameters): P
     }
   );
 
-  logger.info(`${parameters.name} uploaded to YouTube | video id: ${res.data.id}`);
+  logger.info(`"${parameters.name}" uploaded to YouTube | video id: ${res.data.id}`);
   parameters.uploaded = parameters.length;
+  parameters.status = "done";
   processes.set(id, parameters);
-
-  unlinkSync(parameters.filePath);
-  logger.info(`${parameters.filePath} deleted after upload`);
 }

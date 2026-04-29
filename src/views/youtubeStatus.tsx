@@ -12,14 +12,18 @@ export default function youtubeStatus(): JSX.Element {
       hx-swap="outerHTML"
     >
       {connected ? (
-        <span>
-          ✓ YouTube connected — expires in {expiresIn}
+        <div class="yt-connected">
+          <span class="yt-connected-label">
+            ✓ YouTube connected — expires in {expiresIn}
+          </span>
           <form method="POST" action="/records/youtube/revoke">
-            <button type="submit">Regenerate</button>
+            <button type="submit" class="btn btn-outline small">Regenerate</button>
           </form>
-        </span>
+        </div>
       ) : (
-        <a href="/records/youtube/auth">Connect YouTube</a>
+        <a href="/records/youtube/auth" class="btn btn-youtube disconnected">
+          Connect YouTube
+        </a>
       )}
     </div>
   );

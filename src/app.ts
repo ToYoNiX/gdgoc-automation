@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import pino from "pino";
+import { join } from "path";
 import session from "express-session";
 import recordsRouter from "./routes/recordsRouter.js";
 import { auth } from "./middleware/auth.js";
@@ -10,6 +12,16 @@ const app = express();
 
 export const logger = pino();
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const ms = Date.now() - start;
+    logger.info(`${req.method} ${req.path} ${res.statusCode} ${ms}ms`);
+  });
+  next();
+});
+
+app.use(express.static(join(process.cwd(), "src/static")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(session({

@@ -31,7 +31,6 @@ export function downloadVideo(req: Request, res: Response) {
     return res.status(400).send("Invalid URL provided");
   }
 
-  const safeName = name.replace(/[^a-zA-Z0-9_\-]/g, "_");
   const description: string = req.body.description?.trim() ?? "";
   const visibility = (req.body.visibility ?? "unlisted") as "public" | "private" | "unlisted";
   const categoryId = "27";
@@ -40,9 +39,9 @@ export function downloadVideo(req: Request, res: Response) {
     .map((t: string) => t.trim())
     .filter(Boolean);
 
-  logger.info(`Queued "${safeName}" from ${url} [${visibility}]`);
-  download(safeName, url, description, visibility, categoryId, tags).catch((err: unknown) => {
-    logger.error(`Failed to process "${safeName}" | ${err}`);
+  logger.info(`Queued "${name}" from ${url} [${visibility}]`);
+  download(name, url, description, visibility, categoryId, tags).catch((err: unknown) => {
+    logger.error(`Failed to process "${name}" | ${err}`);
   });
 
   return res.send(index());

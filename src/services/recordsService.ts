@@ -29,7 +29,8 @@ export async function download(
   mkdirSync("downloads", { recursive: true });
 
   const id = uuidv4();
-  const filePath = join("downloads", `${id}_${name}.mp4`);
+  const safeFileName = name.replace(/[^a-zA-Z0-9_\-]/g, "_");
+  const filePath = join("downloads", `${id}_${safeFileName}.mp4`);
 
   const parameters: process_parameters = {
     name,
